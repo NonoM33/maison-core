@@ -1,0 +1,34 @@
+{
+  "name": "@maison/core",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Maison platform — shared multi-tenant backend (API, auth, concierge IA, ...)",
+  "type": "module",
+  "module": "src/index.ts",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "check": "bun run typecheck && bun run lint && bun run test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.31.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.0",
+    "postgres": "^3.4.5",
+    "zod": "^3.23.8"
+  }
+}

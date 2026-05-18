@@ -1,0 +1,10 @@
+node_modules
+dist
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea
+.vscode
+drizzle/migrations/meta/_journal.json.tmp
