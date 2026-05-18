@@ -11,13 +11,14 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check src",
-    "lint:fix": "biome check --write src",
-    "format": "biome format --write src",
+    "lint": "biome check src scripts drizzle.config.ts",
+    "lint:fix": "biome check --write src scripts drizzle.config.ts",
+    "format": "biome format --write src scripts drizzle.config.ts",
     "check": "bun run typecheck && bun run lint && bun run test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "seed:fwurtz": "bun scripts/seed-fwurtz.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
