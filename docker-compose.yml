@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: maison-core-db
+    environment:
+      POSTGRES_USER: maison
+      POSTGRES_PASSWORD: maison
+      POSTGRES_DB: maison_core
+    ports:
+      - "5432:5432"
+    volumes:
+      - maison-core-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maison -d maison_core"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  maison-core-pgdata:
