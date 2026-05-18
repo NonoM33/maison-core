@@ -91,3 +91,92 @@ describe("tenantResolver middleware", () => {
     expect(await res.json()).toMatchObject({ error: "tenant_inactive", status: "suspended" });
   });
 });
+
+describe("tenantResolver — X-Maison-Tenant header", () => {
+  it("resolves the tenant from the X-Maison-Tenant header when present", async () => {
+    const repo = new InMemoryTenantRepository([fwurtz]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: {
+        host: "api.maison-core.157.180.43.90.sslip.io",
+        "x-maison-tenant": "fwurtz",
+      },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ slug: "fwurtz", name: "Maison Fwurtz" });
+  });
+
+  it("prefers the header over the subdomain when both point to different tenants", async () => {
+    const otherTenant: Tenant = {
+      ...fwurtz,
+      id: "00000000-0000-0000-0000-000000000003",
+      slug: "other-co",
+      name: "Other Co",
+    };
+    const repo = new InMemoryTenantRepository([fwurtz, otherTenant]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: {
+        host: "other-co.localhost:3000",
+        "x-maison-tenant": "fwurtz",
+      },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ slug: "fwurtz" });
+  });
+
+  it("ignores empty or whitespace-only header and falls back to subdomain", async () => {
+    const repo = new InMemoryTenantRepository([fwurtz]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: { host: "fwurtz.localhost:3000", "x-maison-tenant": "   " },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ slug: "fwurtz" });
+  });
+
+  it("ignores a header carrying invalid characters and falls back to subdomain", async () => {
+    const repo = new InMemoryTenantRepository([fwurtz]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: { host: "fwurtz.localhost:3000", "x-maison-tenant": "Bobby; DROP TABLE" },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ slug: "fwurtz" });
+  });
+
+  it("normalises slug to lowercase before lookup", async () => {
+    const repo = new InMemoryTenantRepository([fwurtz]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: {
+        host: "api.maison-core.157.180.43.90.sslip.io",
+        "x-maison-tenant": "FWURTZ",
+      },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ slug: "fwurtz" });
+  });
+
+  it("returns 404 when the header points to an unknown tenant (even with valid host)", async () => {
+    const repo = new InMemoryTenantRepository([fwurtz]);
+    const app = buildApp(repo);
+
+    const res = await app.request("/whoami", {
+      headers: { host: "fwurtz.localhost:3000", "x-maison-tenant": "ghost" },
+    });
+
+    expect(res.status).toBe(404);
+    expect(await res.json()).toMatchObject({ slug: "ghost" });
+  });
+});
