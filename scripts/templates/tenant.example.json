@@ -1,0 +1,29 @@
+{
+  "slug": "example-co",
+  "name": "Example & Co.",
+  "status": "active",
+  "dbStrategy": "shared",
+  "dedicatedDbUrl": null,
+  "featureFlags": {
+    "concierge": true
+  },
+  "themeTokens": {
+    "colors": {
+      "primary": "#0F0F0F",
+      "accent": "#C9A86A"
+    },
+    "typography": {
+      "headingFont": "Fraunces, serif",
+      "bodyFont": "Inter, sans-serif"
+    },
+    "logoUrl": "https://example-co.fr/logo.svg"
+  },
+  "conciergeConfig": {
+    "persona": "Tu es la conciergère personnelle de Example & Co., maison française. Vouvoiement chaleureux, phrases courtes, ton sobre. Tu réponds aux questions sur nos services et orientes les visiteurs vers une prise de contact. Ne dis jamais que tu es une IA.",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "enabledTools": [],
+    "forbiddenTopics": []
+  }
+}
